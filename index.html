@@ -172,7 +172,8 @@
 
     // ФИНАЛЬНАЯ ОТПРАВКА В ТАБЛИЦУ
     document.getElementById('confirmBtn').onclick = () => {
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbwy72IndBmT5UAEcQd2-Oo4tmM2oB03n3YqHeFPBH-7jVXAtaUEsAO9fRHgB8l7Cq1t/exec"; // <--- ЗАМЕНИ ЭТОТ ТЕКСТ НА СВОЮ ССЫЛКУ
+        // ИСПРАВЛЕННАЯ ССЫЛКА (убрано двойное const)
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbwy72IndBmT5UAEcQd2-Oo4tmM2oB03n3YqHeFPBH-7jVXAtaUEsAO9fRHgB8l7Cq1t/exec"; 
 
         const data = {
             name: document.getElementById('userName').value,
@@ -201,6 +202,7 @@
             console.error('Ошибка:', error);
             alert("Ошибка сети. Попробуйте еще раз.");
             document.getElementById('confirmBtn').disabled = false;
+            document.getElementById('confirmBtn').innerText = "ОТПРАВИТЬ 🚀";
         });
     };
 </script>
@@ -208,5 +210,6 @@
 </body>
 
 </html>
+
 
 
