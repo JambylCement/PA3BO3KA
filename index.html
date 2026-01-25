@@ -176,10 +176,17 @@
 
     document.getElementById('confirmBtn').onclick = () => {
         const webAppUrl = "https://script.google.com/macros/s/AKfycbwy72IndBmT5UAEcQd2-Oo4tmM2oB03n3YqHeFPBH-7jVXAtaUEsAO9fRHgB8l7Cq1t/exec"; 
+        
+        // 1. Создаем переменную (та самая 3-я строка)
+        let statusForTable = document.getElementById('formStatus').innerText;
+
+        // 2. Твои две строки проверки
+        if (statusForTable === "КЕЛУ") statusForTable = "ПРИЕЗД";
+        if (statusForTable === "КЕТУ") statusForTable = "ОТЪЕЗД";
 
         const data = {
             name: document.getElementById('userName').value,
-            status: document.getElementById('formStatus').innerText,
+            status: statusForTable, // 3. Отправляем исправленный статус вместо текста с экрана
             dept: document.getElementById('userDept').options[document.getElementById('userDept').selectedIndex].text,
             time: document.getElementById('travelTime').value.replace('T', ' '),
             station: document.getElementById('station').options[document.getElementById('station').selectedIndex].text
@@ -211,6 +218,7 @@
 </script>
 </body>
 </html>
+
 
 
 
