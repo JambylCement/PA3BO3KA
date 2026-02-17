@@ -7,27 +7,20 @@
     <style>
         body { font-family: sans-serif; padding: 15px; background: #f0f2f5; margin: 0; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        
         .logo { display: block; margin: 0 auto 15px; max-width: 190px; height: auto; }
-
         .lang-switcher { display: flex; justify-content: flex-end; gap: 5px; margin-bottom: 10px; }
         .lang-btn { padding: 3px 10px; border: 1px solid #ccc; border-radius: 5px; background: white; cursor: pointer;}
         .lang-btn.active { background: #666; color: white; }
-
         .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
         .main-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em; color: white; }
         .btn-in { background: #4CAF50; }
         .btn-out { background: #2196F3; }
-        
-        /* Кнопка списка */
         .list-btn { width: 100%; padding: 10px; background: #004481; color: white; border: none; border-radius: 8px; font-size: 0.9em; font-weight: bold; cursor: pointer; margin-bottom: 20px; }
-
         #formStatus { text-align: center; font-weight: bold; margin-bottom: 20px; color: #833; font-size: 1.0em; height: 1.2em; }
         .field { margin-bottom: 15px; }
         label { display: block; font-size: 0.9em; color: #555; margin-bottom: 5px; font-weight: bold; }
         input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 1em; }
         .submit-btn { width: 100%; padding: 15px; background: #004481; color: white; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; }
-
         #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
     </style>
@@ -42,8 +35,6 @@
     </div>
     <div id="formStatus">Выберите тип поездки / Сапар түрін таңдаңыз</div>
 
-    
-
     <div class="btn-group">
         <button class="main-btn btn-in" id="btnInAction">ПРИЕЗД</button>
         <button class="main-btn btn-out" id="btnOutAction">ОТЪЕЗД</button>
@@ -52,7 +43,6 @@
     <button class="list-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vT5DTEHaa8T_TNnCJpRhtlDbVICsLJG1OFBwat_6WN0DIfL9tUBo5XTj0YsAHc8jLx3s3MX5HfA4gJe/pubhtml?gid=0&single=true', '_blank')">
         👀 ТІЗІМДІ КӨРУ / ПРОСМОТР СПИСКА
     </button>
-
 
     <div class="field">
         <label id="labelName">Ваше ФИО:</label>
@@ -81,6 +71,7 @@
     <div class="field">
         <label id="labelStation">Станция:</label>
         <select id="station">
+            <option value="">Выберите станцию...</option>
             <option value="Мын Арал">Мын Арал</option>
             <option value="Шыганак">Шыганак</option>
         </select>
@@ -106,13 +97,15 @@
             btnIn: "ПРИЕЗД", btnOut: "ОТЪЕЗД", name: "Ваше ФИО:", dept: "Отдел:",
             datetime: "Дата и время:", station: "Станция:", submit: "ГОТОВО",
             statusIn: "ПРИЕЗД", statusOut: "ОТЪЕЗД",
-            placeholder: "Введите имя", chooseDept: "Выберите отдел..."
+            placeholder: "Введите имя", chooseDept: "Выберите отдел...",
+            chooseStation: "Выберите станцию..."
         },
         kz: {
             btnIn: "КЕЛУ", btnOut: "КЕТУ", name: "Аты-жөніңіз:", dept: "Бөлім:",
             datetime: "Күні мен уақыты:", station: "Станция:", submit: "ДАЙЫН",
             statusIn: "КЕЛУ", statusOut: "КЕТУ",
-            placeholder: "Атыңызды енгізіңіз", chooseDept: "Бөлімді таңдаңыз..."
+            placeholder: "Атыңызды енгізіңіз", chooseDept: "Бөлімді таңдаңыз...",
+            chooseStation: "Станцияны таңдаңыз..."
         }
     };
 
@@ -129,6 +122,7 @@
         document.getElementById('labelSubmit').innerText = translations[lang].submit;
         document.getElementById('userName').placeholder = translations[lang].placeholder;
         document.getElementById('userDept').options[0].text = translations[lang].chooseDept;
+        document.getElementById('station').options[0].text = translations[lang].chooseStation;
         document.getElementById('btnRu').classList.toggle('active', lang === 'ru');
         document.getElementById('btnKz').classList.toggle('active', lang === 'kz');
         document.getElementById('formStatus').innerText = "Выберите тип поездки / Сапар түрін таңдаңыз";
@@ -152,9 +146,11 @@
         const deptValue = document.getElementById('userDept').value;
         const deptText = document.getElementById('userDept').options[document.getElementById('userDept').selectedIndex].text;
         const time = document.getElementById('travelTime').value;
+        const stationValue = document.getElementById('station').value;
         const stationText = document.getElementById('station').options[document.getElementById('station').selectedIndex].text;
 
-        if (!name || status.includes("Выберите") || !deptValue || !time) {
+        // Защита: проверяем, чтобы все поля были заполнены, включая станцию
+        if (!name || status.includes("Выберите") || !deptValue || !time || !stationValue) {
             alert("Пожалуйста, заполните ВСЕ поля! / Барлық өрістерді толтырыңыз!");
             return;
         }
@@ -177,17 +173,14 @@
 
     document.getElementById('confirmBtn').onclick = () => {
         const webAppUrl = "https://script.google.com/macros/s/AKfycbwy72IndBmT5UAEcQd2-Oo4tmM2oB03n3YqHeFPBH-7jVXAtaUEsAO9fRHgB8l7Cq1t/exec"; 
-        
-        // 1. Создаем переменную (та самая 3-я строка)
         let statusForTable = document.getElementById('formStatus').innerText;
 
-        // 2. Твои две строки проверки
         if (statusForTable === "КЕЛУ") statusForTable = "ПРИЕЗД";
         if (statusForTable === "КЕТУ") statusForTable = "ОТЪЕЗД";
 
         const data = {
             name: document.getElementById('userName').value,
-            status: statusForTable, // 3. Отправляем исправленный статус вместо текста с экрана
+            status: statusForTable,
             dept: document.getElementById('userDept').options[document.getElementById('userDept').selectedIndex].text,
             time: document.getElementById('travelTime').value.replace('T', ' '),
             station: document.getElementById('station').options[document.getElementById('station').selectedIndex].text
@@ -219,10 +212,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
